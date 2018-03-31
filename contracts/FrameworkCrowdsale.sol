@@ -42,14 +42,13 @@ contract FrameworkCrowdsale is CappedCrowdsale, Ownable {
   uint256 public totalWeiRaisedDuringPreICO;
   // ===================
 
-  bool finishedCrowdsale = false;
+  bool public crowdsaleStarted = true;
 
   // Events
   event EthTransferred(string text);
   event EthRefunded(string text);
   
-  function FrameworkCrowdsale(uint256 _rate, address _wallet, uint256 _goal, uint256 _cap) CappedCrowdsale(_cap) Crowdsale(_rate, _wallet, createTokenContract()) public {
-    require(_goal <= _cap);	
+  function FrameworkCrowdsale(uint256 _rate, address _wallet, uint256 _cap) CappedCrowdsale(_cap) Crowdsale(_rate, _wallet, createTokenContract()) public {
   }
   
   function createTokenContract() internal returns (MintableToken) {
@@ -101,6 +100,14 @@ contract FrameworkCrowdsale is CappedCrowdsale, Ownable {
         uint256 calcRate = DEFAULT_RATE + _bonus;
         setCurrentRate(calcRate);
     }
+    
+    function setRate(uint256 _rate) public onlyOwner {
+        setCurrentRate(_rate);
+    }
+    
+    function setCrowdSale(bool _started) public onlyOwner {
+        crowdsaleStarted = _started;
+    }
   // ================ Stage Management Over =====================
   
     // Token Purchase
@@ -126,7 +133,7 @@ contract FrameworkCrowdsale is CappedCrowdsale, Ownable {
     // ====================================================================
 
     function finish(address _teamFund, address _ecosystemFund, address _bountyFund) public onlyOwner {
-        if (!finishedCrowdsale){
+        if (crowdsaleStarted){
             uint256 alreadyMinted = token.totalSupply();
             require(alreadyMinted < maxTokens);
 
@@ -138,7 +145,7 @@ contract FrameworkCrowdsale is CappedCrowdsale, Ownable {
             MintableToken(token).mint(_teamFund,tokensForTeam);
             MintableToken(token).mint(_ecosystemFund,tokensForEcosystem);
             MintableToken(token).mint(_bountyFund,tokensForBounty);
-            finishedCrowdsale = true;
+            crowdsaleStarted = false;
         }
     }
   // ===============================

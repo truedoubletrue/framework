@@ -1,7 +1,7 @@
 {
-  "name": "framework-trial",
+  "name": "framework",
   "version": "1.0.0",
-  "description": "framework token work",
+  "description": "framework token",
   "main": "truffle-config.js",
   "directories": {
     "test": "test"
@@ -12,6 +12,28 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "ajv": "^6.2.1",
+    "ajv-keywords": "^3.1.0",
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "chai-bignumber": "^2.0.2",
+    "mocha": "^5.0.4",
+    "npm": "^5.7.1",
     "zeppelin-solidity": "^1.7.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "babel-preset-stage-3": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "truffle-solidity-loader": "0.0.8",
+    "webpack": "^4.1.1",
+    "webpack-dev-server": "^3.1.1"
   }
 }
