@@ -1,16 +1,17 @@
-require('babel-register')({
-  ignore: /node_modules\/(?!zeppelin-solidity)/
-});
-require('babel-polyfill');
+
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
   // to customize your Truffle configuration!
   networks: {
-    development: {
+    gapp: { //ganache app
       host: "localhost",
       port: 7545,
-      gas: 6500000,
-      network_id: "5777"
+		network_id: "1000"
+    },
+    local: { //ganache-cli
+      host: "localhost",
+      port: 8545,
+		network_id: "*"
     }
   },
   solc: {

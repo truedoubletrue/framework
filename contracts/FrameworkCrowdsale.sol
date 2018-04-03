@@ -48,7 +48,7 @@ contract FrameworkCrowdsale is CappedCrowdsale, Ownable {
   event EthTransferred(string text);
   event EthRefunded(string text);
   
-  function FrameworkCrowdsale(uint256 _rate, address _wallet, uint256 _cap) CappedCrowdsale(_cap) Crowdsale(_rate, _wallet, createTokenContract()) public {
+  function FrameworkCrowdsale(uint256 _rate, address _wallet, uint256 _cap, MintableToken _token) CappedCrowdsale(_cap) Crowdsale(_rate, _wallet, _token) public {
   }
   
   function createTokenContract() internal returns (MintableToken) {

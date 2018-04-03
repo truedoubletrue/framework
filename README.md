@@ -16,7 +16,10 @@ Compile contracts in contract directory:
 > truffle compile
 
 Run token migrations on migrations directory:
-> truffle migrations
+> truffle migrate --network gapp (when using Ganache.app)
+> truffle migrate --network local (when using ganache-cli)
+> truffle develop
+   truffle(develop)> migrate (when using develop option) 
 
 Running tests that are in the test directory:
 > truffle test
