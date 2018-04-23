@@ -3,13 +3,14 @@ pragma solidity ^0.4.19;
 import './FrameworkToken.sol';
 
 import 'zeppelin-solidity/contracts/crowdsale/validation/CappedCrowdsale.sol';
+import 'zeppelin-solidity/contracts/crowdsale/emission/MintedCrowdsale.sol';
 import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
 
 
 
-contract FrameworkCrowdsale is CappedCrowdsale, Ownable {
+contract FrameworkInvest is CappedCrowdsale, MintedCrowdsale, Ownable {
 
-  uint8 decimals=18;  //this should match the FrameworkToken value
+  uint8 decimals = 18;  //this should be the token value
   // ============
   enum CrowdsaleStage { PS_R1, PS_R2, PS_R3, PS_R4, PS_R5, PS_R6, PS_R7, ICO }
   CrowdsaleStage public stage = CrowdsaleStage.PS_R1; // By default it's Pre Sale Round 1
@@ -17,24 +18,23 @@ contract FrameworkCrowdsale is CappedCrowdsale, Ownable {
 
   // Token Distribution
   // =============================
-  uint256 public maxTokens = 10000000 * (10 ** uint256(decimals)); // There will be total 10 million FRWK Tokens
-  uint256 public tokensForEcosystem = 2000000 * (10 ** uint256(decimals)); // 2 million for the eco system reserve
-  uint256 public tokensForTeam = 2000000 * (10 ** uint256(decimals)); // 2 million for the FRWK team
-  uint256 public tokensForBounty = 100000 * (10 ** uint256(decimals)); // 100k for token bounty reserve
-  uint256 public totalTokensForSale = 6000000 * (10 ** uint256(decimals)); // 6 million FRWK Tokens will be sold in Crowdsale
-  uint256 public totalTokensForSaleDuringPreICO = 2000000 * (10 ** uint256(decimals)); // 2 million out of 6 million FRWKs will be sold during PreICO
+  uint256 public maxTokens = 100000000 * (10 ** uint256(decimals)); // There will be total 20 million FRWK Tokens available for sale
+  uint256 public tokensForReserve = 40000000 * (10 ** uint256(decimals)); // 40 million for the eco system reserve
+  uint256 public tokensForBounty = 1000000 * (10 ** uint256(decimals)); // 1 million for token bounty reserve
+  uint256 public totalTokensForSale = 50000000 * (10 ** uint256(decimals)); // 50 million FRWK Tokens will be sold in Crowdsale
+  uint256 public totalTokensForSaleDuringPreICO = 20000000 * (10 ** uint256(decimals)); // 20 million out of 6 million FRWKs will be sold during PreICO
   // ==============================
   
   // Token Funding Rates
   // ==============================
-  uint256 public DEFAULT_RATE = 5000;
-  uint256 public ROUND_1_PRESALE_BONUS = 1750; //35%
-  uint256 public ROUND_2_PRESALE_BONUS = 1500; //30%
-  uint256 public ROUND_3_PRESALE_BONUS = 1250; //25%
-  uint256 public ROUND_4_PRESALE_BONUS = 1000; //20%
-  uint256 public ROUND_5_PRESALE_BONUS = 750; //15%
-  uint256 public ROUND_6_PRESALE_BONUS = 500; //10%
-  uint256 public ROUND_7_PRESALE_BONUS = 250; //5%
+  uint256 public DEFAULT_RATE = 500;
+  uint256 public ROUND_1_PRESALE_BONUS = 175; //35%
+  uint256 public ROUND_2_PRESALE_BONUS = 150; //30%
+  uint256 public ROUND_3_PRESALE_BONUS = 125; //25%
+  uint256 public ROUND_4_PRESALE_BONUS = 100; //20%
+  uint256 public ROUND_5_PRESALE_BONUS = 75; //15%
+  uint256 public ROUND_6_PRESALE_BONUS = 50; //10%
+  uint256 public ROUND_7_PRESALE_BONUS = 25; //5%
   uint256 public ICO_BONUS = 0;
 
   // Amount raised in PreICO
@@ -48,12 +48,9 @@ contract FrameworkCrowdsale is CappedCrowdsale, Ownable {
   event EthTransferred(string text);
   event EthRefunded(string text);
   
-  function FrameworkCrowdsale(uint256 _rate, address _wallet, uint256 _cap, MintableToken _token) CappedCrowdsale(_cap) Crowdsale(_rate, _wallet, _token) public {
+  function FrameworkInvest(uint256 _rate, address _wallet, uint256 _cap, CappedToken _token) CappedCrowdsale(_cap) Crowdsale(_rate, _wallet, _token) public {
   }
   
-  function createTokenContract() internal returns (MintableToken) {
-    return new FrameworkToken(); // Deploys the ERC20 token. Automatically called when crowdsale contract is deployed
-  }
   
   // Crowdsale Stage Management
     // =========================================================
@@ -132,18 +129,16 @@ contract FrameworkCrowdsale is CappedCrowdsale, Ownable {
     // Finish: Mint Extra Tokens as needed before finalizing the Crowdsale.
     // ====================================================================
 
-    function finish(address _teamFund, address _ecosystemFund, address _bountyFund) public onlyOwner {
+    function finish(address _reserveFund, address _bountyFund) public onlyOwner {
         if (crowdsaleStarted){
             uint256 alreadyMinted = token.totalSupply();
             require(alreadyMinted < maxTokens);
 
             uint256 unsoldTokens = totalTokensForSale - alreadyMinted;
             if (unsoldTokens > 0) {
-                tokensForEcosystem = tokensForEcosystem + unsoldTokens;
+                tokensForReserve = tokensForReserve + unsoldTokens;
             }
-
-            MintableToken(token).mint(_teamFund,tokensForTeam);
-            MintableToken(token).mint(_ecosystemFund,tokensForEcosystem);
+            MintableToken(token).mint(_reserveFund,tokensForReserve);
             MintableToken(token).mint(_bountyFund,tokensForBounty);
             crowdsaleStarted = false;
         }
